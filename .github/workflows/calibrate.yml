@@ -27,7 +27,7 @@ jobs:
 
       - name: Run calibration script
         run: |
-          python /decision-model/calibrate.py
+          python decision-model/calibrate.py
 
       - name: Commit and push results
         run: |
