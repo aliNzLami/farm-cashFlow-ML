@@ -1,0 +1,48 @@
+name: Download Kaggle Dataset
+
+on:
+
+  workflow_dispatch:
+
+  schedule:
+    - cron: '0 0 * * *'
+
+
+jobs:
+  download-dataset:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+
+      - name: Install dependencies
+        run: |
+          pip install kagglehub pandas
+
+
+      - name: Set up Kaggle credentials
+        run: |
+          mkdir -p ~/.kaggle
+          echo '{"username":"${{ secrets.KAGGLE_USERNAME }}","key":"${{ secrets.KAGGLE_KEY }}"}' > ~/.kaggle/kaggle.json
+          chmod 600 ~/.kaggle/kaggle.json
+
+
+      - name: Download dataset
+        run: python scripts/download_dataset.py
+
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add dataset/
+          git diff --staged --quiet || (git commit -m "🤖 Update dataset from Kaggle [skip ci]" && git push)
