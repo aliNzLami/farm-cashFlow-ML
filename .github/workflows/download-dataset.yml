@@ -1,33 +1,26 @@
-name: Download Kaggle Dataset
+name: Download Kaggle Dataset (All-in-One)
 
 on:
-
   workflow_dispatch:
-
   schedule:
     - cron: '0 0 * * *'
 
-
 jobs:
-  download-dataset:
+  download:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Checkout repository
         uses: actions/checkout@v4
-
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-
       - name: Install dependencies
         run: |
-          pip install kagglehub pandas
-
+          pip install kagglehub pandas openpyxl
 
       - name: Set up Kaggle credentials
         run: |
@@ -35,14 +28,50 @@ jobs:
           echo '{"username":"${{ secrets.KAGGLE_USERNAME }}","key":"${{ secrets.KAGGLE_KEY }}"}' > ~/.kaggle/kaggle.json
           chmod 600 ~/.kaggle/kaggle.json
 
-
-      - name: Download dataset
-        run: python scripts/download_dataset.py
-
-
-      - name: Commit and push changes
+      - name: Download, extract and copy all files
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          python -c "
+          import os
+          import shutil
+          import kagglehub
+          from pathlib import Path
+
+          download_path = kagglehub.dataset_download('khimtagia/agricommodity-futures-multi-source-ml-dataset')
+          print(f'Downloaded to: {download_path}')
+
+          dest_dir = Path('dataset')
+          dest_dir.mkdir(exist_ok=True)
+
+          copied_files = []
+          for file_path in Path(download_path).iterdir():
+              if file_path.is_file():
+                  dest_file = dest_dir / file_path.name
+                  shutil.copy2(file_path, dest_file)
+                  copied_files.append(file_path.name)
+                  print(f'   Copied: {file_path.name}')
+
+          print(f'\nTotal files copied: {len(copied_files)}')
+          print(f'Files: {', '.join(copied_files)}')
+
+          import pandas as pd
+          for file_name in copied_files:
+              file_path = dest_dir / file_name
+              try:
+                  if file_name.endswith('.csv'):
+                      df = pd.read_csv(file_path)
+                  elif file_name.endswith(('.xls', '.xlsx')):
+                      df = pd.read_excel(file_path, engine='openpyxl')
+                  else:
+                      continue
+                  print(f'\n{file_name}: {len(df):,} rows, {len(df.columns)} columns')
+                  print(f'   Columns: {list(df.columns[:5])}{\"...\" if len(df.columns) > 5 else \"\"}')
+              except Exception as e:
+                  print(f'   Skip {file_name}: {e}')
+          "
+
+      - name: Commit and push new files
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add dataset/
-          git diff --staged --quiet || (git commit -m "🤖 Update dataset from Kaggle [skip ci]" && git push)
+          git diff --staged --quiet || (git commit -m "🤖 Auto-update dataset from Kaggle [skip ci]" && git push)
