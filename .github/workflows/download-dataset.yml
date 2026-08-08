@@ -51,7 +51,7 @@ jobs:
                   print(f'   Copied: {file_path.name}')
 
           print(f'\nTotal files copied: {len(copied_files)}')
-          print(f'Files: {', '.join(copied_files)}')
+          print(f\"Files: {', '.join(copied_files)}\")
 
           import pandas as pd
           for file_name in copied_files:
@@ -64,7 +64,7 @@ jobs:
                   else:
                       continue
                   print(f'\n{file_name}: {len(df):,} rows, {len(df.columns)} columns')
-                  print(f'   Columns: {list(df.columns[:5])}{\"...\" if len(df.columns) > 5 else \"\"}')
+                  print(f\"   Columns: {list(df.columns[:5])}{'...' if len(df.columns) > 5 else ''}\")
               except Exception as e:
                   print(f'   Skip {file_name}: {e}')
           "
