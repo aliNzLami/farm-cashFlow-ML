@@ -27,7 +27,7 @@ jobs:
 
       - name: Run analysis script
         run: |
-          python scripts/analyze_weather_price.py
+          python analyze_weather_price.py
 
       - name: Commit and push outputs (if any)
         run: |
