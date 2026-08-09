@@ -1,0 +1,65 @@
+{
+  "top_features": [
+    {
+      "feature": "Low",
+      "importance": 52.72673105191634
+    },
+    {
+      "feature": "High",
+      "importance": 7.758681964381142
+    },
+    {
+      "feature": "Open",
+      "importance": 6.314637090222252
+    },
+    {
+      "feature": "close_lag_1",
+      "importance": 2.2912729623395234
+    },
+    {
+      "feature": "temperature_2m_max_lag_2",
+      "importance": 1.0816404324170685
+    },
+    {
+      "feature": "Close_lag_1",
+      "importance": 0.7652723246744202
+    },
+    {
+      "feature": "currency_adjusted_close",
+      "importance": 0.7445926572419764
+    },
+    {
+      "feature": "BB_lower",
+      "importance": 0.7174594506840258
+    },
+    {
+      "feature": "close_to_low",
+      "importance": 0.6710943205972766
+    },
+    {
+      "feature": "close_to_high",
+      "importance": 0.5169352284776136
+    },
+    {
+      "feature": "EMA_20",
+      "importance": 0.3235377917780605
+    },
+    {
+      "feature": "volatility",
+      "importance": 0.3041467931179041
+    },
+    {
+      "feature": "momentum_1m",
+      "importance": 0.2908865847921744
+    },
+    {
+      "feature": "BB_upper_adj",
+      "importance": 0.26266325797599144
+    },
+    {
+      "feature": "MACD_hist",
+      "importance": 0.24479299060832269
+    }
+  ],
+  "expected_value": 484.2766444444444
+}
