@@ -6,8 +6,7 @@ Corn Price Forecasting - Phase 3 (Fixed Version)
 FIX: Both models now predict the exact same time period.
 - ARIMA: trained on weeks 0..N-20, forecasts weeks N-20..N-1
 - Random Forest: features from weeks N-21..N-2, target from weeks N-20..N-1
-
-This ensures RMSE, MAE, and R² are directly comparable.
+- Fixed: adfuller now works with numpy arrays using np.diff()
 """
 
 import os
@@ -73,8 +72,8 @@ def aligned_train_test_split(df, test_size=20):
     
     Returns:
         - train: training data (all rows except last test_size+1)
-        - test_features: features for RF (last test_size+1 rows, excluding the very last)
-        - test_target: actual target values for both models (last test_size rows)
+        - rf_features_df: features for RF (last test_size+1 rows, excluding the very last)
+        - y_true: actual target values for both models (last test_size rows)
         - test_dates: dates for the test period
     """
     n = len(df)
@@ -103,20 +102,29 @@ def aligned_train_test_split(df, test_size=20):
     return train, rf_features_df, y_true, test_dates
 
 # ============================================================
-# SECTION 3: ARIMA MODEL
+# SECTION 3: ARIMA MODEL (FIXED)
 # ============================================================
 
 def find_best_arima_order(y, max_p=5, max_d=2, max_q=5):
-    """Find best ARIMA order using AIC grid search."""
+    """
+    Find best ARIMA order using AIC grid search.
+    FIXED: Convert numpy array to pandas Series for diff() method.
+    """
     best_aic = np.inf
     best_order = None
     
+    # Convert to pandas Series if needed (for diff() method)
+    if isinstance(y, np.ndarray):
+        y_series = pd.Series(y)
+    else:
+        y_series = y.copy()
+    
     # Test for stationarity
-    result = adfuller(y)
+    result = adfuller(y_series)
     d = 0
     if result[1] > 0.05:
         d = 1
-        result = adfuller(y.diff().dropna())
+        result = adfuller(y_series.diff().dropna())
         if result[1] > 0.05:
             d = 2
     
@@ -125,11 +133,14 @@ def find_best_arima_order(y, max_p=5, max_d=2, max_q=5):
     
     print(f"   Searching ARIMA orders (p: 0-{max_p}, d={d}, q: 0-{max_q})...")
     
+    # Use y_series for model training
+    y_train = y_series.values if isinstance(y_series, pd.Series) else y_series
+    
     for p, q in itertools.product(p_range, q_range):
         if p == 0 and q == 0:
             continue
         try:
-            model = ARIMA(y, order=(p, d, q))
+            model = ARIMA(y_train, order=(p, d, q))
             fitted = model.fit()
             if fitted.aic < best_aic:
                 best_aic = fitted.aic
@@ -151,12 +162,18 @@ def train_arima(arima_train, forecast_steps):
     print("ARIMA MODEL")
     print("=" * 60)
     
+    # Ensure we have a pandas Series
+    if isinstance(arima_train, np.ndarray):
+        y_series = pd.Series(arima_train)
+    else:
+        y_series = arima_train.copy()
+    
     # Find best order
-    best_order = find_best_arima_order(arima_train)
+    best_order = find_best_arima_order(y_series)
     
     # Train final model
     print(f"   Training ARIMA{best_order}...")
-    model = ARIMA(arima_train, order=best_order)
+    model = ARIMA(y_series, order=best_order)
     fitted = model.fit()
     print(f"   AIC: {fitted.aic:.2f}")
     
@@ -241,6 +258,12 @@ def evaluate_and_compare(arima_result, rf_result, y_true, test_dates):
     y_pred_arima = arima_result['predictions']
     y_pred_rf = rf_result['predictions']
     
+    # Ensure same length
+    n = min(len(y_true), len(y_pred_arima), len(y_pred_rf))
+    y_true = y_true[:n]
+    y_pred_arima = y_pred_arima[:n]
+    y_pred_rf = y_pred_rf[:n]
+    
     # Calculate metrics
     rmse_arima = np.sqrt(mean_squared_error(y_true, y_pred_arima))
     mae_arima = mean_absolute_error(y_true, y_pred_arima)
@@ -275,12 +298,17 @@ def plot_results(results, y_true, test_dates, output_dir='outputs'):
     """Plot actual vs predicted values for both models."""
     os.makedirs(output_dir, exist_ok=True)
     
+    # Ensure same length
+    n = min(len(test_dates), len(y_true), len(results['ARIMA']['predictions']))
+    test_dates = test_dates[:n]
+    y_true = y_true[:n]
+    
     fig, axes = plt.subplots(2, 1, figsize=(14, 10))
     
     # ARIMA plot
     ax1 = axes[0]
     ax1.plot(test_dates, y_true, label='Actual', color='black', linewidth=2)
-    ax1.plot(test_dates, results['ARIMA']['predictions'], label='ARIMA Predicted', 
+    ax1.plot(test_dates, results['ARIMA']['predictions'][:n], label='ARIMA Predicted', 
              color='blue', linestyle='--', linewidth=2)
     ax1.set_title(f'ARIMA - RMSE: {results["ARIMA"]["rmse"]:.2f}, MAE: {results["ARIMA"]["mae"]:.2f}, R²: {results["ARIMA"]["r2"]:.4f}')
     ax1.set_ylabel('Corn Price (USD/bushel)')
@@ -290,7 +318,7 @@ def plot_results(results, y_true, test_dates, output_dir='outputs'):
     # Random Forest plot
     ax2 = axes[1]
     ax2.plot(test_dates, y_true, label='Actual', color='black', linewidth=2)
-    ax2.plot(test_dates, results['Random Forest']['predictions'], label='Random Forest Predicted', 
+    ax2.plot(test_dates, results['Random Forest']['predictions'][:n], label='Random Forest Predicted', 
              color='green', linestyle='--', linewidth=2)
     ax2.set_title(f'Random Forest - RMSE: {results["Random Forest"]["rmse"]:.2f}, MAE: {results["Random Forest"]["mae"]:.2f}, R²: {results["Random Forest"]["r2"]:.4f}')
     ax2.set_xlabel('Date')
