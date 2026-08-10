@@ -1,0 +1,323 @@
+======================================================================
+CONTEXT-AWARE MODEL RECOMMENDATION FRAMEWORK
+RESULTS FOR THREE EXPERTISE SCENARIOS
+Dataset: integrated_corn_weekly.csv
+======================================================================
+Method: Coefficient-based weights (CRITIC removed)
+Calibrated coefficients (Corn V8.0 - Adjusted):
+  α=0.45 (Interpretability - lowered, black-box better)
+  γ=0.50 (Robustness - maintained)
+  ζ=0.40 (Scalability - lowered, small dataset)
+  θ=0.85 (Representation Capacity - increased, non-linear key)
+Normalized weights: Interp=0.205, Robust=0.227, Scal=0.182, RepCap=0.386
+======================================================================
+
+
+######################################################################
+# SCENARIO 1: EXPERTISE = 0.01
+######################################################################
+======================================================================
+COMPARISON OF COMPATIBILITY METHODS
+======================================================================
+Manager Expertise: Non-Expert (0.01)
+Dataset: Corn (700 rows, 84 columns)
+======================================================================
+
+OBSERVABLE DATASET INDICATORS
+------------------------------------------------------------
+  Missing Ratio      : 0.00%
+  Duplicate Ratio    : 0.00%
+  Outlier Ratio      : 2.93%
+  Feature Diversity  : 1.000
+  Avg Cardinality    : 0.0
+  Avg Correlation    : 0.228
+  Feature-to-Instance (ρ) : 0.118571
+  Dataset Size       : 700
+
+CONTEXT VARIABLES (scaled 0-1)
+------------------------------------------------------------
+  Volume (V)        : 0.4065
+  Noise (N)         : 0.0088
+  Granularity (G)   : 0.5000
+  rho (Feature/Instance) : 1.000000
+  Expertise (E)     : 0.0100
+
+REQUIREMENT WEIGHTS (derived from calibrated coefficients)
+------------------------------------------------------------
+  Interpretability    : 0.2045
+  Robustness          : 0.2273
+  Scalability         : 0.1818
+  Representation Capacity: 0.3864
+
+REQUIREMENT VECTOR (via continuous mapping)
+------------------------------------------------------------
+  Interpretability    : 0.3910
+  Robustness          : 0.1923
+  Scalability         : 0.2494
+  Representation Capacity: 0.1673
+
+CONTINUOUS MAPPING FUNCTIONS (calibrated Corn coefficients)
+------------------------------------------------------------
+  r_interp = 0.45*(1 - sigmoid(10*(E-0.5))) + 0.55*rho
+  r_robust = 0.50*sigmoid(12*(N-0.35)) + 0.50*tanh(2*rho)
+  r_scal   = 0.40*tanh(3*V) + 0.60*G
+  r_rep    = 0.85*G + 0.15*E
+  (all values clipped and normalized to sum to 1)
+
+COEFFICIENTS USED FOR WEIGHTS (calibrated Corn V8.0 - Adjusted)
+------------------------------------------------------------
+  Interpretability    : α = 0.45  (lowered, black-box better)
+  Robustness          : γ = 0.50  (maintained, good data quality)
+  Scalability         : ζ = 0.40  (lowered, small dataset)
+  Representation Cap. : θ = 0.85  (increased, non-linear key)
+
+MODEL CAPABILITY PROFILES (Corn-specific models)
+------------------------------------------------------------
+  Model                  Interp   Robust   Scalab   RepCap
+  -------------------------------------------------------
+  ARIMA                    0.80     0.20     0.80     0.20
+  Random Forest            0.50     0.80     0.50     0.80
+  XGBoost                  0.20     0.80     0.80     0.90
+  LightGBM                 0.20     0.80     0.90     0.90
+  WaveletANN               0.20     0.80     0.50     0.90
+
+COMPATIBILITY METHODS COMPARISON
+----------------------------------------------------------------------
+  Model                   Manhattan    Euclidean
+  --------------------------------------------------
+  ARIMA                      0.8018       0.7004
+  Random Forest              0.5496       0.4976
+  XGBoost                    0.4396       0.4051
+  LightGBM                   0.4214       0.3870
+  WaveletANN                 0.4942       0.4430
+
+RANKINGS BY METHOD
+----------------------------------------------------------------------
+
+  MANHATTAN (Primary):
+    1. ARIMA: 0.8018
+    2. Random Forest: 0.5496
+    3. WaveletANN: 0.4942
+    4. XGBoost: 0.4396
+    5. LightGBM: 0.4214
+
+  EUCLIDEAN (Alternative):
+    1. ARIMA: 0.7004
+    2. Random Forest: 0.4976
+    3. WaveletANN: 0.4430
+    4. XGBoost: 0.4051
+    5. LightGBM: 0.3870
+
+RECOMMENDED MODELS BY METHOD
+----------------------------------------------------------------------
+  Manhattan (Primary) : ARIMA
+  Euclidean           : ARIMA
+======================================================================
+
+======================================================================
+
+######################################################################
+# SCENARIO 2: EXPERTISE = 0.50
+######################################################################
+======================================================================
+COMPARISON OF COMPATIBILITY METHODS
+======================================================================
+Manager Expertise: Expert (0.50)
+Dataset: Corn (700 rows, 84 columns)
+======================================================================
+
+OBSERVABLE DATASET INDICATORS
+------------------------------------------------------------
+  Missing Ratio      : 0.00%
+  Duplicate Ratio    : 0.00%
+  Outlier Ratio      : 2.93%
+  Feature Diversity  : 1.000
+  Avg Cardinality    : 0.0
+  Avg Correlation    : 0.228
+  Feature-to-Instance (ρ) : 0.118571
+  Dataset Size       : 700
+
+CONTEXT VARIABLES (scaled 0-1)
+------------------------------------------------------------
+  Volume (V)        : 0.4065
+  Noise (N)         : 0.0088
+  Granularity (G)   : 0.5000
+  rho (Feature/Instance) : 1.000000
+  Expertise (E)     : 0.5000
+
+REQUIREMENT WEIGHTS (derived from calibrated coefficients)
+------------------------------------------------------------
+  Interpretability    : 0.2045
+  Robustness          : 0.2273
+  Scalability         : 0.1818
+  Representation Capacity: 0.3864
+
+REQUIREMENT VECTOR (via continuous mapping)
+------------------------------------------------------------
+  Interpretability    : 0.3228
+  Robustness          : 0.2042
+  Scalability         : 0.2648
+  Representation Capacity: 0.2082
+
+CONTINUOUS MAPPING FUNCTIONS (calibrated Corn coefficients)
+------------------------------------------------------------
+  r_interp = 0.45*(1 - sigmoid(10*(E-0.5))) + 0.55*rho
+  r_robust = 0.50*sigmoid(12*(N-0.35)) + 0.50*tanh(2*rho)
+  r_scal   = 0.40*tanh(3*V) + 0.60*G
+  r_rep    = 0.85*G + 0.15*E
+  (all values clipped and normalized to sum to 1)
+
+COEFFICIENTS USED FOR WEIGHTS (calibrated Corn V8.0 - Adjusted)
+------------------------------------------------------------
+  Interpretability    : α = 0.45  (lowered, black-box better)
+  Robustness          : γ = 0.50  (maintained, good data quality)
+  Scalability         : ζ = 0.40  (lowered, small dataset)
+  Representation Cap. : θ = 0.85  (increased, non-linear key)
+
+MODEL CAPABILITY PROFILES (Corn-specific models)
+------------------------------------------------------------
+  Model                  Interp   Robust   Scalab   RepCap
+  -------------------------------------------------------
+  ARIMA                    0.80     0.20     0.80     0.20
+  Random Forest            0.50     0.80     0.50     0.80
+  XGBoost                  0.20     0.80     0.80     0.90
+  LightGBM                 0.20     0.80     0.90     0.90
+  WaveletANN               0.20     0.80     0.50     0.90
+
+COMPATIBILITY METHODS COMPARISON
+----------------------------------------------------------------------
+  Model                   Manhattan    Euclidean
+  --------------------------------------------------
+  ARIMA                      0.8009       0.6858
+  Random Forest              0.5569       0.5179
+  XGBoost                    0.4749       0.4337
+  LightGBM                   0.4567       0.4152
+  WaveletANN                 0.5294       0.4721
+
+RANKINGS BY METHOD
+----------------------------------------------------------------------
+
+  MANHATTAN (Primary):
+    1. ARIMA: 0.8009
+    2. Random Forest: 0.5569
+    3. WaveletANN: 0.5294
+    4. XGBoost: 0.4749
+    5. LightGBM: 0.4567
+
+  EUCLIDEAN (Alternative):
+    1. ARIMA: 0.6858
+    2. Random Forest: 0.5179
+    3. WaveletANN: 0.4721
+    4. XGBoost: 0.4337
+    5. LightGBM: 0.4152
+
+RECOMMENDED MODELS BY METHOD
+----------------------------------------------------------------------
+  Manhattan (Primary) : ARIMA
+  Euclidean           : ARIMA
+======================================================================
+
+======================================================================
+
+######################################################################
+# SCENARIO 3: EXPERTISE = 0.99
+######################################################################
+======================================================================
+COMPARISON OF COMPATIBILITY METHODS
+======================================================================
+Manager Expertise: Expert (0.99)
+Dataset: Corn (700 rows, 84 columns)
+======================================================================
+
+OBSERVABLE DATASET INDICATORS
+------------------------------------------------------------
+  Missing Ratio      : 0.00%
+  Duplicate Ratio    : 0.00%
+  Outlier Ratio      : 2.93%
+  Feature Diversity  : 1.000
+  Avg Cardinality    : 0.0
+  Avg Correlation    : 0.228
+  Feature-to-Instance (ρ) : 0.118571
+  Dataset Size       : 700
+
+CONTEXT VARIABLES (scaled 0-1)
+------------------------------------------------------------
+  Volume (V)        : 0.4065
+  Noise (N)         : 0.0088
+  Granularity (G)   : 0.5000
+  rho (Feature/Instance) : 1.000000
+  Expertise (E)     : 0.9900
+
+REQUIREMENT WEIGHTS (derived from calibrated coefficients)
+------------------------------------------------------------
+  Interpretability    : 0.2045
+  Robustness          : 0.2273
+  Scalability         : 0.1818
+  Representation Capacity: 0.3864
+
+REQUIREMENT VECTOR (via continuous mapping)
+------------------------------------------------------------
+  Interpretability    : 0.2456
+  Robustness          : 0.2176
+  Scalability         : 0.2822
+  Representation Capacity: 0.2546
+
+CONTINUOUS MAPPING FUNCTIONS (calibrated Corn coefficients)
+------------------------------------------------------------
+  r_interp = 0.45*(1 - sigmoid(10*(E-0.5))) + 0.55*rho
+  r_robust = 0.50*sigmoid(12*(N-0.35)) + 0.50*tanh(2*rho)
+  r_scal   = 0.40*tanh(3*V) + 0.60*G
+  r_rep    = 0.85*G + 0.15*E
+  (all values clipped and normalized to sum to 1)
+
+COEFFICIENTS USED FOR WEIGHTS (calibrated Corn V8.0 - Adjusted)
+------------------------------------------------------------
+  Interpretability    : α = 0.45  (lowered, black-box better)
+  Robustness          : γ = 0.50  (maintained, good data quality)
+  Scalability         : ζ = 0.40  (lowered, small dataset)
+  Representation Cap. : θ = 0.85  (increased, non-linear key)
+
+MODEL CAPABILITY PROFILES (Corn-specific models)
+------------------------------------------------------------
+  Model                  Interp   Robust   Scalab   RepCap
+  -------------------------------------------------------
+  ARIMA                    0.80     0.20     0.80     0.20
+  Random Forest            0.50     0.80     0.50     0.80
+  XGBoost                  0.20     0.80     0.80     0.90
+  LightGBM                 0.20     0.80     0.90     0.90
+  WaveletANN               0.20     0.80     0.50     0.90
+
+COMPATIBILITY METHODS COMPARISON
+----------------------------------------------------------------------
+  Model                   Manhattan    Euclidean
+  --------------------------------------------------
+  ARIMA                      0.7674       0.6641
+  Random Forest              0.5653       0.5375
+  XGBoost                    0.5148       0.4641
+  LightGBM                   0.4966       0.4452
+  WaveletANN                 0.5693       0.5029
+
+RANKINGS BY METHOD
+----------------------------------------------------------------------
+
+  MANHATTAN (Primary):
+    1. ARIMA: 0.7674
+    2. WaveletANN: 0.5693
+    3. Random Forest: 0.5653
+    4. XGBoost: 0.5148
+    5. LightGBM: 0.4966
+
+  EUCLIDEAN (Alternative):
+    1. ARIMA: 0.6641
+    2. Random Forest: 0.5375
+    3. WaveletANN: 0.5029
+    4. XGBoost: 0.4641
+    5. LightGBM: 0.4452
+
+RECOMMENDED MODELS BY METHOD
+----------------------------------------------------------------------
+  Manhattan (Primary) : ARIMA
+  Euclidean           : ARIMA
+======================================================================
+
+======================================================================
