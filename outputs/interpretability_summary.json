@@ -1,9 +1,9 @@
 {
   "model": "Random Forest",
-  "train_rmse": 13.722607783506215,
-  "test_rmse": 8.71890829239376,
+  "train_rmse": 13.722607783506213,
+  "test_rmse": 8.718908292393735,
   "train_r2": 0.9900717442119594,
-  "test_r2": 0.7964219237615593,
+  "test_r2": 0.7964219237615604,
   "n_estimators": 100,
   "max_depth": 15,
   "test_samples": 20
